@@ -130,17 +130,17 @@ for (int i = 0; i < 50000; i++)
     Console.WriteLine(ann.ToString());
 }
 
-Console.WriteLine("===== Outputs/Costs ==============================================================");
-string str = "";
-for (int i = 0; i < outputsLists.Count; i++)
-{
-    str = "";
-    foreach (float output in outputsLists[i]) str += output + " ";
-    str += "/ ";
-    foreach (float cost in costLists[i]) str += cost + " ";
-    //Console.WriteLine(str);
-}
-Console.WriteLine();
+//Console.WriteLine("===== Outputs/Costs ==============================================================");
+//string str = "";
+//for (int i = 0; i < outputsLists.Count; i++)
+//{
+//    str = "";
+//    foreach (float output in outputsLists[i]) str += output + " ";
+//    str += "/ ";
+//    foreach (float cost in costLists[i]) str += cost + " ";
+//    Console.WriteLine(str);
+//}
+//Console.WriteLine();
 
 Console.WriteLine("===== Resulting Model ============================================================");
 Console.WriteLine(ann.ToString());
