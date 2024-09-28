@@ -1,5 +1,4 @@
 ﻿using AI.Enums;
-using System.Xml.Linq;
 
 namespace AI.Classes
 {
@@ -104,42 +103,14 @@ namespace AI.Classes
             }
         }
 
-        public void BackpropagateInputWeights(float actualValue)
+        /// <summary>
+        /// Calculate this node's cost from the given correct value.
+        /// </summary>
+        /// <param name="correctValue">The correct value that was expected.</param>
+        /// <returns>This node's cost.</returns>
+        public float CalculateCost(float correctValue)
         {
-            float cost = CalculateCost(actualValue);
-            //float weightedSum = 0;
-            //switch (Algorithm)
-            //{
-            //    case Algorithms.None:
-            //        weightedSum = actualValue;
-            //        break;
-            //    case Algorithms.Threshold:
-            //        weightedSum = actualValue <= 0 ? 0 : 1;
-            //        break;
-            //    case Algorithms.Sigmoid:
-            //        weightedSum = MathF.Log(actualValue / (1 - actualValue));
-            //        break;
-            //    case Algorithms.Rectifier:
-            //        weightedSum = actualValue;
-            //        break;
-            //    case Algorithms.HyperbolicTangent:
-            //        weightedSum = MathF.Atanh(actualValue);
-            //        break;
-            //}
-
-            foreach (NodeLink link in InputLinks) link.AdjustWeight(cost);
-        }
-
-        public void BackpropagateWeights()
-        {
-            float sumOutputWeightAdjustments = 0;
-            foreach (NodeLink link in OutputLinks) sumOutputWeightAdjustments += link.LastWeightAdjustment;
-            foreach (NodeLink link in InputLinks) link.AdjustWeight(sumOutputWeightAdjustments / OutputLinks.Count);
-        }
-
-        public float CalculateCost(float actualValue)
-        {
-            return (Value < actualValue ? 1 : -1) * (.1f * MathF.Pow(Value - actualValue, 2));
+            return .5f * MathF.Pow(Value - correctValue, 2);
         }
 
         /// <summary>

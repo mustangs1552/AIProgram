@@ -1,6 +1,5 @@
 ﻿using AI.Enums;
 using AI.Models;
-using System.Xml.XPath;
 
 namespace AI.Classes
 {
@@ -219,24 +218,105 @@ namespace AI.Classes
             return OutputValues;
         }
 
-        public void BackPropagateNetwork(List<float> actualValues)
+        /// <summary>
+        /// Back propagate the network.
+        /// </summary>
+        /// <param name="inputs">The input values.</param>
+        /// <param name="correctValues">The correct values that were expected.</param>
+        public void BackPropagateNetwork(List<float> inputs, List<float> correctValues)
         {
-            if (Network[Network.Count - 1].Count != actualValues.Count) return;
+            if (inputs == null || inputs.Count == 0 || correctValues == null || correctValues.Count == 0 || Network[Network.Count - 1].Count != correctValues.Count) return;
 
-            for (int nodeI = 0; nodeI < Network[Network.Count - 1].Count; nodeI++) Network[Network.Count - 1][nodeI].BackpropagateInputWeights(actualValues[nodeI]);
-            
-            for (int layerI = Network.Count - 2; layerI >= 0; layerI--)
+            for (int nodeI = 0; nodeI < Network[Network.Count - 1].Count; nodeI++) BackPropagateOutputNode(nodeI, inputs, correctValues);
+        }
+
+        /// <summary>
+        /// Back propagate from the given output node.
+        /// </summary>
+        /// <param name="nodeI">The ouput node's index.</param>
+        /// <param name="inputs">The input values.</param>
+        /// <param name="correctValues">The correct values that were expected.</param>
+        protected void BackPropagateOutputNode(int nodeI, List<float> inputs, List<float> correctValues)
+        {
+            if (nodeI < 0 || inputs == null || inputs.Count == 0) return;
+
+            List<float> preCosts = CalculateOutputCosts(correctValues);
+            List<float> postCosts = new List<float>();
+            foreach (NodeLink link in Network[Network.Count - 1][nodeI].InputLinks)
             {
-                foreach (Node node in Network[layerI]) node.BackpropagateWeights();
+                if (link.StartNode == null) continue;
+
+                link.AdjustWeight(preCosts[nodeI]);
+                PropagateNetwork(inputs);
+                postCosts = CalculateOutputCosts(correctValues);
+                if (MathF.Abs(preCosts[nodeI]) > MathF.Abs(postCosts[nodeI]))
+                {
+                    preCosts = postCosts;
+
+                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                }
+                else
+                {
+                    link.ResetToLastWeight();
+                    link.AdjustWeight(-preCosts[nodeI]);
+                    PropagateNetwork(inputs);
+                    preCosts = CalculateOutputCosts(correctValues);
+
+                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                }
             }
         }
 
-        public List<float> CalculateOutputCosts(List<float> actualValues)
+        /// <summary>
+        /// Back propagate from the given node in the given layer.
+        /// </summary>
+        /// <param name="layerI">The layer index the node is in.</param>
+        /// <param name="nodeI">The node index of the node within the layer.</param>
+        /// <param name="outputNodeI">The output node's index that is being back propagated.</param>
+        /// <param name="inputs">The input values.</param>
+        /// <param name="correctValues">The correct values that were expected.</param>
+        protected void BackPropagateNode(int layerI, int nodeI, int outputNodeI, List<float> inputs, List<float> correctValues)
         {
-            if (Network[Network.Count - 1].Count != actualValues.Count) return new List<float>();
+            if (layerI < 0 || nodeI < 0 || outputNodeI < 0 || inputs == null || inputs.Count == 0) return;
+
+            List<float> preCosts = CalculateOutputCosts(correctValues);
+            List<float> postCosts = new List<float>();
+            foreach (NodeLink link in Network[layerI][nodeI].InputLinks)
+            {
+                if (link.StartNode == null) continue;
+
+                link.AdjustWeight(preCosts[outputNodeI]);
+                PropagateNetwork(inputs);
+                postCosts = CalculateOutputCosts(correctValues);
+                if (MathF.Abs(preCosts[outputNodeI]) > MathF.Abs(postCosts[outputNodeI]))
+                {
+                    preCosts = postCosts;
+
+                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                }
+                else
+                {
+                    link.ResetToLastWeight();
+                    link.AdjustWeight(-preCosts[outputNodeI]);
+                    PropagateNetwork(inputs);
+                    preCosts = CalculateOutputCosts(correctValues);
+
+                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate all the output nodes' costs.
+        /// </summary>
+        /// <param name="correctValues">The correct values that was expected.</param>
+        /// <returns>The output nodes' costs.</returns>
+        public List<float> CalculateOutputCosts(List<float> correctValues)
+        {
+            if (Network[Network.Count - 1].Count != correctValues.Count) return new List<float>();
 
             List<float> costs = new List<float>();
-            for (int outputI = 0; outputI < Network[Network.Count - 1].Count; outputI++) costs.Add(Network[Network.Count - 1][outputI].CalculateCost(actualValues[outputI]));
+            for (int outputI = 0; outputI < Network[Network.Count - 1].Count; outputI++) costs.Add(Network[Network.Count - 1][outputI].CalculateCost(correctValues[outputI]));
 
             return costs;
         }
