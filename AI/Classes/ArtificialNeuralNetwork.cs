@@ -253,7 +253,7 @@ namespace AI.Classes
                 {
                     preCosts = postCosts;
 
-                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                    if (Network.Count > 1) BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
                 }
                 else
                 {
@@ -262,7 +262,7 @@ namespace AI.Classes
                     PropagateNetwork(inputs);
                     preCosts = CalculateOutputCosts(correctValues);
 
-                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                    if (Network.Count > 1) BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
                 }
             }
         }
@@ -292,7 +292,7 @@ namespace AI.Classes
                 {
                     preCosts = postCosts;
 
-                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                    if (layerI > 0) BackPropagateNode(layerI - 1, Network[layerI - 1].IndexOf(link.StartNode), outputNodeI, inputs, correctValues);
                 }
                 else
                 {
@@ -301,7 +301,7 @@ namespace AI.Classes
                     PropagateNetwork(inputs);
                     preCosts = CalculateOutputCosts(correctValues);
 
-                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
+                    if (layerI > 0) BackPropagateNode(layerI - 1, Network[layerI - 1].IndexOf(link.StartNode), outputNodeI, inputs, correctValues);
                 }
             }
         }
