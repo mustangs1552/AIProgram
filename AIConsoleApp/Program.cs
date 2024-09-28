@@ -131,6 +131,7 @@ for (int i = 0; i < 50000; i++)
 }
 
 //Console.WriteLine("===== Outputs/Costs ==============================================================");
+//Console.WriteLine();
 //string str = "";
 //for (int i = 0; i < outputsLists.Count; i++)
 //{
@@ -143,4 +144,5 @@ for (int i = 0; i < 50000; i++)
 //Console.WriteLine();
 
 Console.WriteLine("===== Resulting Model ============================================================");
+Console.WriteLine();
 Console.WriteLine(ann.ToString());
