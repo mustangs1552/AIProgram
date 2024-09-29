@@ -1,8 +1,9 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AI.Classes;
 using AI.Enums;
+using System.Runtime.ConstrainedExecution;
 
-ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(2, new List<int>() { 5, 5 }, 1, Algorithms.Sigmoid, Algorithms.Sigmoid);
+ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(2, new List<int>() { 3, 3 }, 1, Algorithms.Sigmoid, Algorithms.Sigmoid);
 //ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(new ANNTemplate()
 //{
 //    NumOfInputNodes = 2,
@@ -35,7 +36,7 @@ List<float> inputValues = new List<float>();
 List<float> correctValues = new List<float>();
 List<List<float>> outputsLists = new List<List<float>>();
 List<List<float>> costLists = new List<List<float>>();
-for (int i = 0; i < 50000; i++)
+for (int i = 0; i < 10; i++)
 {
     Console.WriteLine($"Pass {i + 1}\n");
 
