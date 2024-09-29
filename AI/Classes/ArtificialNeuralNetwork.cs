@@ -84,6 +84,15 @@ namespace AI.Classes
         protected int numOfInputNodes = 1;
         protected List<int> numOfHiddenLayerNodes = new List<int>();
         protected int numOfOutputNodes = 1;
+        protected List<float> preCostsBPON = new List<float>();
+        protected List<float> postCostsBPON = new List<float>();
+        protected List<float> preCostsBPN = new List<float>();
+        protected List<float> postCostsBPN = new List<float>();
+        protected float firstAdjustmentBPON = 0;
+        protected float secondAdjustmentBPON = 0;
+        protected float firstAdjustmentBPN = 0;
+        protected float secondAdjustmentBPN = 0;
+        protected List<float> costs = new List<float>();
 
         /// <summary>
         /// Setup the network using the given template.
@@ -240,30 +249,39 @@ namespace AI.Classes
         {
             if (nodeI < 0 || inputs == null || inputs.Count == 0) return;
 
-            List<float> preCosts = CalculateOutputCosts(correctValues);
-            List<float> postCosts = new List<float>();
+            preCostsBPON = new List<float>();
+            postCostsBPON = new List<float>();
+            firstAdjustmentBPON = 0;
+            secondAdjustmentBPON = 0;
             foreach (NodeLink link in Network[Network.Count - 1][nodeI].InputLinks)
             {
                 if (link.StartNode == null) continue;
 
-                link.AdjustWeight(preCosts[nodeI]);
+                preCostsBPON = CalculateOutputCosts(correctValues);
+                link.AdjustWeight(preCostsBPON[nodeI]);
                 PropagateNetwork(inputs);
-                postCosts = CalculateOutputCosts(correctValues);
-                if (MathF.Abs(preCosts[nodeI]) > MathF.Abs(postCosts[nodeI]))
-                {
-                    preCosts = postCosts;
+                postCostsBPON = CalculateOutputCosts(correctValues);
+                firstAdjustmentBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
 
-                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
-                }
-                else
+                link.ResetToLastWeight();
+                link.AdjustWeight(-preCostsBPON[nodeI]);
+                PropagateNetwork(inputs);
+                postCostsBPON = CalculateOutputCosts(correctValues);
+                secondAdjustmentBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
+
+                if (firstAdjustmentBPON == 0 && secondAdjustmentBPON == 0)
                 {
                     link.ResetToLastWeight();
-                    link.AdjustWeight(-preCosts[nodeI]);
                     PropagateNetwork(inputs);
-                    preCosts = CalculateOutputCosts(correctValues);
-
-                    BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
                 }
+                else if (firstAdjustmentBPON > secondAdjustmentBPON)
+                {
+                    link.ResetToLastWeight();
+                    link.AdjustWeight(preCostsBPON[nodeI]);
+                    PropagateNetwork(inputs);
+                }
+
+                if (Network.Count > 1) BackPropagateNode(Network.Count - 2, Network[Network.Count - 2].IndexOf(link.StartNode), nodeI, inputs, correctValues);
             }
         }
 
@@ -279,30 +297,39 @@ namespace AI.Classes
         {
             if (layerI < 0 || nodeI < 0 || outputNodeI < 0 || inputs == null || inputs.Count == 0) return;
 
-            List<float> preCosts = CalculateOutputCosts(correctValues);
-            List<float> postCosts = new List<float>();
+            preCostsBPN = new List<float>();
+            postCostsBPN = new List<float>();
+            firstAdjustmentBPN = 0;
+            secondAdjustmentBPN = 0;
             foreach (NodeLink link in Network[layerI][nodeI].InputLinks)
             {
                 if (link.StartNode == null) continue;
 
-                link.AdjustWeight(preCosts[outputNodeI]);
+                preCostsBPN = CalculateOutputCosts(correctValues);
+                link.AdjustWeight(preCostsBPN[outputNodeI]);
                 PropagateNetwork(inputs);
-                postCosts = CalculateOutputCosts(correctValues);
-                if (MathF.Abs(preCosts[outputNodeI]) > MathF.Abs(postCosts[outputNodeI]))
-                {
-                    preCosts = postCosts;
+                postCostsBPN = CalculateOutputCosts(correctValues);
+                firstAdjustmentBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
 
-                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
-                }
-                else
+                link.ResetToLastWeight();
+                link.AdjustWeight(-preCostsBPN[outputNodeI]);
+                PropagateNetwork(inputs);
+                postCostsBPN = CalculateOutputCosts(correctValues);
+                secondAdjustmentBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
+
+                if (firstAdjustmentBPN == 0 && secondAdjustmentBPN == 0)
                 {
                     link.ResetToLastWeight();
-                    link.AdjustWeight(-preCosts[outputNodeI]);
                     PropagateNetwork(inputs);
-                    preCosts = CalculateOutputCosts(correctValues);
-
-                    BackPropagateNode(layerI - 1, Network[layerI].IndexOf(link.StartNode), nodeI, inputs, correctValues);
                 }
+                else if (firstAdjustmentBPN > secondAdjustmentBPN)
+                {
+                    link.ResetToLastWeight();
+                    link.AdjustWeight(preCostsBPN[outputNodeI]);
+                    PropagateNetwork(inputs);
+                }
+
+                if (layerI > 0) BackPropagateNode(layerI - 1, Network[layerI - 1].IndexOf(link.StartNode), outputNodeI, inputs, correctValues);
             }
         }
 
@@ -315,7 +342,7 @@ namespace AI.Classes
         {
             if (Network[Network.Count - 1].Count != correctValues.Count) return new List<float>();
 
-            List<float> costs = new List<float>();
+            costs = new List<float>();
             for (int outputI = 0; outputI < Network[Network.Count - 1].Count; outputI++) costs.Add(Network[Network.Count - 1][outputI].CalculateCost(correctValues[outputI]));
 
             return costs;
