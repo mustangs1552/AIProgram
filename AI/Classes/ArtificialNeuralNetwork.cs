@@ -88,10 +88,10 @@ namespace AI.Classes
         protected List<float> postCostsBPON = new List<float>();
         protected List<float> preCostsBPN = new List<float>();
         protected List<float> postCostsBPN = new List<float>();
-        protected float firstBPON = 0;
-        protected float secondBPON = 0;
-        protected float firstBPN = 0;
-        protected float secondBPN = 0;
+        protected float firstAdjustmentBPON = 0;
+        protected float secondAdjustmentBPON = 0;
+        protected float firstAdjustmentBPN = 0;
+        protected float secondAdjustmentBPN = 0;
         protected List<float> costs = new List<float>();
 
         /// <summary>
@@ -251,8 +251,8 @@ namespace AI.Classes
 
             preCostsBPON = new List<float>();
             postCostsBPON = new List<float>();
-            firstBPON = 0;
-            secondBPON = 0;
+            firstAdjustmentBPON = 0;
+            secondAdjustmentBPON = 0;
             foreach (NodeLink link in Network[Network.Count - 1][nodeI].InputLinks)
             {
                 if (link.StartNode == null) continue;
@@ -261,23 +261,20 @@ namespace AI.Classes
                 link.AdjustWeight(preCostsBPON[nodeI]);
                 PropagateNetwork(inputs);
                 postCostsBPON = CalculateOutputCosts(correctValues);
-                firstBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
-                Console.WriteLine($"Ouptut-{nodeI}->{link.StartNode.Name}");
-                Console.WriteLine($"\t{preCostsBPON[nodeI]} - {postCostsBPON[nodeI]} = {firstBPON}");
+                firstAdjustmentBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
 
                 link.ResetToLastWeight();
                 link.AdjustWeight(-preCostsBPON[nodeI]);
                 PropagateNetwork(inputs);
                 postCostsBPON = CalculateOutputCosts(correctValues);
-                secondBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
-                Console.WriteLine($"\t{preCostsBPON[nodeI]} - {postCostsBPON[nodeI]} = {secondBPON}");
+                secondAdjustmentBPON = MathF.Abs(preCostsBPON[nodeI] - postCostsBPON[nodeI]);
 
-                if (firstBPON == 0 && secondBPON == 0)
+                if (firstAdjustmentBPON == 0 && secondAdjustmentBPON == 0)
                 {
                     link.ResetToLastWeight();
                     PropagateNetwork(inputs);
                 }
-                else if (firstBPON < secondBPON)
+                else if (firstAdjustmentBPON > secondAdjustmentBPON)
                 {
                     link.ResetToLastWeight();
                     link.AdjustWeight(preCostsBPON[nodeI]);
@@ -302,8 +299,8 @@ namespace AI.Classes
 
             preCostsBPN = new List<float>();
             postCostsBPN = new List<float>();
-            firstBPN = 0;
-            secondBPN = 0;
+            firstAdjustmentBPN = 0;
+            secondAdjustmentBPN = 0;
             foreach (NodeLink link in Network[layerI][nodeI].InputLinks)
             {
                 if (link.StartNode == null) continue;
@@ -312,23 +309,20 @@ namespace AI.Classes
                 link.AdjustWeight(preCostsBPN[outputNodeI]);
                 PropagateNetwork(inputs);
                 postCostsBPN = CalculateOutputCosts(correctValues);
-                firstBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
-                Console.WriteLine($"{layerI}-{nodeI}->{link.StartNode.Name}");
-                Console.WriteLine($"\t{preCostsBPN[outputNodeI]} - {postCostsBPN[outputNodeI]} = {firstBPN}");
+                firstAdjustmentBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
 
                 link.ResetToLastWeight();
                 link.AdjustWeight(-preCostsBPN[outputNodeI]);
                 PropagateNetwork(inputs);
                 postCostsBPN = CalculateOutputCosts(correctValues);
-                secondBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
-                Console.WriteLine($"\t{preCostsBPN[outputNodeI]} - {postCostsBPN[outputNodeI]} = {secondBPN}");
+                secondAdjustmentBPN = MathF.Abs(preCostsBPN[outputNodeI] - postCostsBPN[outputNodeI]);
 
-                if (firstBPN == 0 && secondBPN == 0)
+                if (firstAdjustmentBPN == 0 && secondAdjustmentBPN == 0)
                 {
                     link.ResetToLastWeight();
                     PropagateNetwork(inputs);
                 }
-                else if (firstBPN < secondBPN)
+                else if (firstAdjustmentBPN > secondAdjustmentBPN)
                 {
                     link.ResetToLastWeight();
                     link.AdjustWeight(preCostsBPN[outputNodeI]);
