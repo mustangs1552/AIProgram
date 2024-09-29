@@ -28,6 +28,8 @@ namespace AI.Classes
         /// </summary>
         public float Value { get; protected set; } = 0;
 
+        protected float currWeightedSum = 0;
+
         public Node() { }
         /// <summary>
         /// Setup this node with a name and its algorithm.
@@ -71,9 +73,9 @@ namespace AI.Classes
         /// <returns>The sum.</returns>
         public float CalcSumInputNodesWithWeights()
         {
-            float weightedSum = 0;
-            foreach (NodeLink link in InputLinks) weightedSum += link.StartNode != null ? link.StartNode.Value * link.Weight : 0;
-            return weightedSum;
+            currWeightedSum = 0;
+            foreach (NodeLink link in InputLinks) currWeightedSum += link.StartNode != null ? link.StartNode.Value * link.Weight : 0;
+            return currWeightedSum;
         }
 
         /// <summary>
@@ -81,24 +83,24 @@ namespace AI.Classes
         /// </summary>
         public void CalculateValue()
         {
-            float weightedSum = CalcSumInputNodesWithWeights();
+            CalcSumInputNodesWithWeights();
 
             switch (Algorithm)
             {
                 case Algorithms.None:
-                    Value = weightedSum;
+                    Value = currWeightedSum;
                     break;
                 case Algorithms.Threshold:
-                    Value = weightedSum < 0 ? 0 : 1;
+                    Value = currWeightedSum < 0 ? 0 : 1;
                     break;
                 case Algorithms.Sigmoid:
-                    Value = (float)(1 / (1 + Math.Pow(Math.E, -weightedSum)));
+                    Value = (float)(1 / (1 + Math.Pow(Math.E, -currWeightedSum)));
                     break;
                 case Algorithms.Rectifier:
-                    Value = MathF.Max(weightedSum, 0);
+                    Value = MathF.Max(currWeightedSum, 0);
                     break;
                 case Algorithms.HyperbolicTangent:
-                    Value = MathF.Tanh(weightedSum);
+                    Value = MathF.Tanh(currWeightedSum);
                     break;
             }
         }
