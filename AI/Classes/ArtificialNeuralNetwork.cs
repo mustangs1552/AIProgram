@@ -12,6 +12,13 @@ namespace AI.Classes
     /// </summary>
     public class ArtificialNeuralNetwork
     {
+        public string Name
+        
+        {
+            get => name;
+            set => name = string.IsNullOrWhiteSpace(value) ? "" : value;
+        }
+
         /// <summary>
         /// The number of input nodes used to build current network.
         /// </summary>
@@ -81,9 +88,11 @@ namespace AI.Classes
         /// </summary>
         public List<List<Node>> Network { get; protected set; } = new List<List<Node>>();
 
+        protected string name = "ANN";
         protected int numOfInputNodes = 1;
         protected List<int> numOfHiddenLayerNodes = new List<int>();
         protected int numOfOutputNodes = 1;
+
         protected List<float> preCostsBPON = new List<float>();
         protected List<float> postCostsBPON = new List<float>();
         protected List<float> preCostsBPN = new List<float>();
@@ -94,6 +103,7 @@ namespace AI.Classes
         protected float secondAdjustmentBPN = 0;
         protected List<float> costs = new List<float>();
 
+        public ArtificialNeuralNetwork() { }
         /// <summary>
         /// Setup the network using the given template.
         /// </summary>
@@ -130,6 +140,23 @@ namespace AI.Classes
         public ArtificialNeuralNetwork(int numOfInputNodes, List<int> numOfHiddenLayerNodes, int numOfOutputNodes, Algorithms hiddenLayerAlgorithmType = Algorithms.None, Algorithms outputNodesAlgorithmType = Algorithms.None)
         {
             BuildNewNetwork(numOfInputNodes, numOfHiddenLayerNodes, numOfOutputNodes, hiddenLayerAlgorithmType, outputNodesAlgorithmType);
+        }
+        public ArtificialNeuralNetwork(SavedArtificialNeuralNetwork savedANN)
+        {
+            if (savedANN == null) return;
+
+            Name = savedANN.Name;
+
+            savedANN.InputNodes.ForEach(savedNode => InputNodes.Add(new InputNode(savedNode)));
+            List<Node> currLayer = new List<Node>();
+            foreach (List<SavedNode> savedLayer in savedANN.Network)
+            {
+                currLayer = new List<Node>();
+                savedLayer.ForEach(savedNode => currLayer.Add(new Node(savedNode)));
+                Network.Add(currLayer);
+            }
+
+            // Create and link up links
         }
 
         /// <summary>

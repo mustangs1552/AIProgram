@@ -1,4 +1,5 @@
 ﻿using AI.Enums;
+using AI.Models;
 
 namespace AI.Classes
 {
@@ -41,16 +42,24 @@ namespace AI.Classes
             Name = name;
             Algorithm = algorithmType;
         }
+        public Node(SavedNode savedNode)
+        {
+            if (savedNode == null) return;
+
+            Name = savedNode.Name;
+            Algorithm = savedNode.Algorithm;
+        }
 
         /// <summary>
         /// Add the given node to this node's input nodes.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        public void AddInputLink(Node? node)
+        /// <param name="nodeLink">The existing node link to use (optional).</param>
+        public void AddInputLink(Node? node, NodeLink? nodeLink = null)
         {
             if (node == null) return;
 
-            NodeLink link = new NodeLink(node, this);
+            NodeLink link = nodeLink == null ? new NodeLink(node, this) : nodeLink;
             InputLinks.Add(link);
             node.OutputLinks.Add(link);
         }
@@ -58,11 +67,12 @@ namespace AI.Classes
         /// Add the given node to this node's output nodes.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        public void AddOutputLink(Node? node)
+        /// <param name="nodeLink">The existing node link to use (optional).</param>
+        public void AddOutputLink(Node? node, NodeLink? nodeLink = null)
         {
             if (node == null) return;
 
-            NodeLink link = new NodeLink(this, node);
+            NodeLink link = nodeLink == null ? new NodeLink(this, node) : nodeLink;
             OutputLinks.Add(link);
             node.InputLinks.Add(link);
         }

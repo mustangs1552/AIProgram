@@ -1,28 +1,30 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AI.Classes;
 using AI.Enums;
+using AI.Models;
 
 ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(3, new List<int>() { 5, 5 }, 1, Algorithms.Sigmoid, Algorithms.Sigmoid);
 //ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(new ANNTemplate()
 //{
-//    NumOfInputNodes = 2,
-//    HiddenLayerNodes = new List<List<AlgorithmType>>()
+//    NumOfInputNodes = 3,
+//    HiddenLayerNodes = new List<List<Algorithms>>()
 //    {
-//        new List<AlgorithmType>()
+//        new List<Algorithms>()
 //        {
-//            AlgorithmType.Rectifier,
-//            AlgorithmType.Threshold
+//            Algorithms.Sigmoid,
+//            Algorithms.Sigmoid,
+//            Algorithms.Sigmoid
 //        },
-//        new List<AlgorithmType>()
+//        new List<Algorithms>()
 //        {
-//            AlgorithmType.Sigmoid,
-//            AlgorithmType.HyperbolicTangent
+//            Algorithms.Sigmoid,
+//            Algorithms.Sigmoid,
+//            Algorithms.Sigmoid
 //        }
 //    },
-//    OutputNodes = new List<AlgorithmType>()
+//    OutputNodes = new List<Algorithms>()
 //    {
-//        AlgorithmType.Sigmoid,
-//        AlgorithmType.Threshold
+//        Algorithms.Sigmoid
 //    }
 //});
 
@@ -37,7 +39,7 @@ List<float> inputValues = new List<float>();
 List<float> correctValues = new List<float>();
 List<List<float>> outputsLists = new List<List<float>>();
 List<List<float>> costLists = new List<List<float>>();
-for (int i = 0; i < 10000; i++)
+for (int i = 0; i < 1000; i++)
 {
     Console.WriteLine($"Pass {i + 1}\n");
 
@@ -224,3 +226,6 @@ Console.WriteLine(startANN);
 Console.WriteLine("-------- Result -----------------------------------------------------------------");
 Console.WriteLine();
 Console.WriteLine(ann.ToString());
+
+IFileService fileService = new FileService();
+Console.WriteLine($"Saved: {fileService.SaveANN(ann)}");

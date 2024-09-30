@@ -1,4 +1,6 @@
-﻿namespace AI.Classes
+﻿using AI.Models;
+
+namespace AI.Classes
 {
     /// <summary>
     /// The connection between two nodes with the weight for this connection..
@@ -32,6 +34,12 @@
             StartNode = startNode;
             EndNode = endNode;
             Weight = new Random().NextSingle() * 2 + -1;
+        }
+        public NodeLink(SavedNodeLink savedNodeLink)
+        {
+            if (savedNodeLink == null) return;
+
+            Weight = savedNodeLink.Weight;
         }
 
         /// <summary>
