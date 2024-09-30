@@ -1,0 +1,20 @@
+{
+  "PreReleaseText": "beta",
+  "BuildText": "",
+  "CommitCountAsMode": 1,
+  "ExcludeCommitCountIfZero": true,
+  "FlipPreReleaseCompare": false,
+  "ExcludePreReleaseOnIncrement": false,
+  "ExcludeBuildOnIncrement": false,
+  "IsUEProject": false,
+  "VSProjectPaths": "AI\\AI.csproj,AIConsoleApp\\AIConsoleApp.csproj",
+  "PackageJSONPaths": "",
+  "ElectronManifestJSONPaths": "",
+  "MergeUEVersion": false,
+  "MergeVSProjectsVersions": true,
+  "MergePackageJSONVersions": false,
+  "MergeElectronManifestJSONVersions": false,
+  "UsePreCommitMode": true,
+  "CreateNewVersionTag": false,
+  "PushNewVersionTag": false
+}
