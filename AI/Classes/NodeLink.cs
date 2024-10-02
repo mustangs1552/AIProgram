@@ -27,19 +27,25 @@ namespace AI.Classes
         /// <summary>
         /// Setup the link with the its two nodes and a random weight between -1 and 1.
         /// </summary>
-        /// <param name="startNode"></param>
-        /// <param name="endNode"></param>
+        /// <param name="startNode">The start node of this link.</param>
+        /// <param name="endNode">The end node of this link.</param>
         public NodeLink(Node? startNode, Node? endNode)
         {
             StartNode = startNode;
             EndNode = endNode;
             Weight = new Random().NextSingle() * 2 + -1;
         }
-        public NodeLink(SavedNodeLink savedNodeLink)
+        /// <summary>
+        /// Setup the link with its two nodes and the given saved node link.
+        /// </summary>
+        /// <param name="startNode">The start node of this link.</param>
+        /// <param name="endNode">The end node of this link.</param>
+        /// <param name="savedNodeLink">The saved node link to use.</param>
+        public NodeLink(Node? startNode, Node? endNode, SavedNodeLink savedNodeLink)
         {
-            if (savedNodeLink == null) return;
-
-            Weight = savedNodeLink.Weight;
+            StartNode = startNode;
+            EndNode = endNode;
+            Weight = savedNodeLink == null ? new Random().NextSingle() * 2 + -1 : savedNodeLink.Weight;
         }
 
         /// <summary>

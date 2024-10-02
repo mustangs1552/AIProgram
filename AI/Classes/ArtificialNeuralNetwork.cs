@@ -4,16 +4,18 @@ using AI.Models;
 namespace AI.Classes
 {
     /// <summary>
-    /// An artificial neural network that manages the state of the network.
+    /// An artificial nueral network that manages the state of the network.
     /// Will only run one pass at a time and not be able to run multiple passes in one call.
-    /// https://www.superdatascience.com/blogs/the-ultimate-guide-to-artificial-neural-networks-ann
+    /// https://www.superdatascience.com/blogs/the-ultimate-guide-to-artificial-nueral-networks-ann
     /// https://www.youtube.com/watch?v=Ilg3gGewQ5U&t=1s
     /// https://www.youtube.com/watch?v=ILsA4nyG7I0
     /// </summary>
-    public class ArtificialNeuralNetwork
+    public class ArtificialNueralNetwork
     {
+        /// <summary>
+        /// The name of the ANN.
+        /// </summary>
         public string Name
-        
         {
             get => name;
             set => name = string.IsNullOrWhiteSpace(value) ? "" : value;
@@ -103,12 +105,11 @@ namespace AI.Classes
         protected float secondAdjustmentBPN = 0;
         protected List<float> costs = new List<float>();
 
-        public ArtificialNeuralNetwork() { }
         /// <summary>
         /// Setup the network using the given template.
         /// </summary>
         /// <param name="template">The template to use.</param>
-        public ArtificialNeuralNetwork(ANNTemplate template)
+        public ArtificialNueralNetwork(ANNTemplate template)
         {
             BuildNewNetwork(template.NumOfInputNodes, template.NumOfHiddentLayerNodes, template.OutputNodes.Count);
 
@@ -137,11 +138,15 @@ namespace AI.Classes
         /// <param name="numOfOutputNodes">The number of output nodes to build.</param>
         /// <param name="hiddenLayerAlgorithmType">The algorithm to use for all the hidden layer nodes.</param>
         /// <param name="outputNodesAlgorithmType">The algorithm to use for all the output nodes.</param>
-        public ArtificialNeuralNetwork(int numOfInputNodes, List<int> numOfHiddenLayerNodes, int numOfOutputNodes, Algorithms hiddenLayerAlgorithmType = Algorithms.None, Algorithms outputNodesAlgorithmType = Algorithms.None)
+        public ArtificialNueralNetwork(int numOfInputNodes, List<int> numOfHiddenLayerNodes, int numOfOutputNodes, Algorithms hiddenLayerAlgorithmType = Algorithms.None, Algorithms outputNodesAlgorithmType = Algorithms.None)
         {
             BuildNewNetwork(numOfInputNodes, numOfHiddenLayerNodes, numOfOutputNodes, hiddenLayerAlgorithmType, outputNodesAlgorithmType);
         }
-        public ArtificialNeuralNetwork(SavedArtificialNeuralNetwork savedANN)
+        /// <summary>
+        /// Setup the network with the given settings from the saved ANN.
+        /// </summary>
+        /// <param name="savedANN">The saved ANN to use.</param>
+        public ArtificialNueralNetwork(SavedArtificialNueralNetwork savedANN)
         {
             if (savedANN == null) return;
 
@@ -156,7 +161,38 @@ namespace AI.Classes
                 Network.Add(currLayer);
             }
 
-            // Create and link up links
+            Node? currStartNode = null;
+            Node? currEndNode = null;
+            NodeLink? currLink = null;
+            foreach (SavedNode savedNode in savedANN.InputNodes)
+            {
+                currStartNode = InputNodes.Where(node => node.Name == savedNode.Name).FirstOrDefault();
+
+                foreach (SavedNodeLink savedNodeLink in savedNode.OutputLinks)
+                {
+                    currEndNode = Network[0].Where(node => node.Name == savedNodeLink.EndNodeName).FirstOrDefault();
+                    if (currStartNode == null || currEndNode == null) continue;
+                    currLink = new NodeLink(currStartNode, currEndNode, savedNodeLink);
+
+                    currStartNode.AddOutputLink(currEndNode, currLink);
+                }
+            }
+            for (int layerI = 0; layerI < savedANN.Network.Count - 1; layerI++)
+            {
+                for (int nodeI = 0; nodeI < savedANN.Network[layerI].Count; nodeI++)
+                {
+                    currStartNode = Network[layerI].Where(node => node.Name == savedANN.Network[layerI][nodeI].Name).FirstOrDefault();
+
+                    foreach (SavedNodeLink savedNodeLink in savedANN.Network[layerI][nodeI].OutputLinks)
+                    {
+                        currEndNode = Network[layerI + 1].Where(node => node.Name == savedNodeLink.EndNodeName).FirstOrDefault();
+                        if (currStartNode == null || currEndNode == null) continue;
+                        currLink = new NodeLink(currStartNode, currEndNode, savedNodeLink);
+
+                        currStartNode.AddOutputLink(currEndNode, currLink);
+                    }
+                }
+            }
         }
 
         /// <summary>

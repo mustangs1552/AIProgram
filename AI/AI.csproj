@@ -6,9 +6,7 @@
 		<Nullable>enable</Nullable>
 		<Version>0.1.1-beta.2</Version>
 	</PropertyGroup>
-	
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 </Project>

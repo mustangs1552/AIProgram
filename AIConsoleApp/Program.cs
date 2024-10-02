@@ -3,8 +3,9 @@ using AI.Classes;
 using AI.Enums;
 using AI.Models;
 
-ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(3, new List<int>() { 5, 5 }, 1, Algorithms.Sigmoid, Algorithms.Sigmoid);
-//ArtificialNeuralNetwork ann = new ArtificialNeuralNetwork(new ANNTemplate()
+IFileService fileService = new FileService();
+ArtificialNueralNetwork ann = fileService.LoadANN("ANN") ?? new ArtificialNueralNetwork(3, new List<int>() { 5, 5 }, 1, Algorithms.Sigmoid, Algorithms.Sigmoid);
+//ArtificialNueralNetwork ann = new ArtificialNueralNetwork(new ANNTemplate()
 //{
 //    NumOfInputNodes = 3,
 //    HiddenLayerNodes = new List<List<Algorithms>>()
@@ -39,7 +40,7 @@ List<float> inputValues = new List<float>();
 List<float> correctValues = new List<float>();
 List<List<float>> outputsLists = new List<List<float>>();
 List<List<float>> costLists = new List<List<float>>();
-for (int i = 0; i < 1000; i++)
+for (int i = 0; i < 1; i++)
 {
     Console.WriteLine($"Pass {i + 1}\n");
 
@@ -227,5 +228,4 @@ Console.WriteLine("-------- Result ---------------------------------------------
 Console.WriteLine();
 Console.WriteLine(ann.ToString());
 
-IFileService fileService = new FileService();
 Console.WriteLine($"Saved: {fileService.SaveANN(ann)}");

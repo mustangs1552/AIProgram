@@ -3,7 +3,7 @@
 namespace AI.Classes
 {
     /// <summary>
-    /// Nodes that are used for supplying inputs to the neural network.
+    /// Nodes that are used for supplying inputs to the nueral network.
     /// </summary>
     public class InputNode : Node
     {

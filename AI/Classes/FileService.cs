@@ -3,8 +3,14 @@ using Newtonsoft.Json;
 
 namespace AI.Classes
 {
+    /// <summary>
+    /// The service that handles writing/reading from files.
+    /// </summary>
     public class FileService : IFileService
     {
+        /// <summary>
+        /// The App Data folder for this app.
+        /// </summary>
         public string AppDataFolder
         {
             get
@@ -18,26 +24,36 @@ namespace AI.Classes
         public readonly string annFolderNameFormat = @"Networks\ANN-{0}";
         public readonly string annModelFileNameFormat = "model-{0}.json";
 
-        public ArtificialNeuralNetwork LoadANN(ArtificialNeuralNetwork ann)
+        /// <summary>
+        /// Load a saved Artificial Nueral Network from file with the given name.
+        /// </summary>
+        /// <param name="name">The name of the ANN to load.</param>
+        /// <returns>The ANN found or null if none was found or errored.</returns>
+        public ArtificialNueralNetwork? LoadANN(string name)
         {
             try
             {
-                string annFilePath = GetANNPath(ann.Name);
-                if (!File.Exists(annFilePath)) return new ArtificialNeuralNetwork();
+                string annFilePath = GetANNPath(name);
+                if (!File.Exists(annFilePath)) return null;
 
                 string fileContents = File.ReadAllText(annFilePath);
-                SavedArtificialNeuralNetwork? savedANN = JsonConvert.DeserializeObject<SavedArtificialNeuralNetwork>(fileContents);
-                if (savedANN == null) return new ArtificialNeuralNetwork();
+                SavedArtificialNueralNetwork? savedANN = JsonConvert.DeserializeObject<SavedArtificialNueralNetwork>(fileContents);
+                if (savedANN == null) return null;
 
-                return new ArtificialNeuralNetwork(savedANN);
+                return new ArtificialNueralNetwork(savedANN);
             }
             catch
             {
-                return new ArtificialNeuralNetwork();
+                return null;
             }
         }
 
-        public bool SaveANN(ArtificialNeuralNetwork ann)
+        /// <summary>
+        /// Save an Artificial Nueral Network to file.
+        /// </summary>
+        /// <param name="ann">The ANN to save.</param>
+        /// <returns>True if successful.</returns>
+        public bool SaveANN(ArtificialNueralNetwork ann)
         {
             if (ann == null) return false;
 
@@ -46,7 +62,7 @@ namespace AI.Classes
                 string folderName = @$"{AppDataFolder}\{string.Format(annFolderNameFormat, ann.Name)}";
                 if (!Directory.Exists(folderName)) Directory.CreateDirectory(folderName);
 
-                File.WriteAllText(GetANNPath(ann.Name), JsonConvert.SerializeObject(SavedArtificialNeuralNetwork.PopulateSavedANN(ann), Formatting.Indented));
+                File.WriteAllText(GetANNPath(ann.Name), JsonConvert.SerializeObject(SavedArtificialNueralNetwork.PopulateSavedANN(ann), Formatting.Indented));
 
                 return true;
             }
@@ -56,6 +72,11 @@ namespace AI.Classes
             }
         }
 
+        /// <summary>
+        /// Get the save path of a Artificial Nueral Network (does not mean file exists).
+        /// </summary>
+        /// <param name="annName">The name of the ANN.</param>
+        /// <returns>The path produced.</returns>
         public string GetANNPath(string annName) => Path.Combine(AppDataFolder, string.Format(annFolderNameFormat, annName), string.Format(annModelFileNameFormat, annName));
     }
 }

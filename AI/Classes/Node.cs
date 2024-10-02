@@ -4,7 +4,7 @@ using AI.Models;
 namespace AI.Classes
 {
     /// <summary>
-    /// A node of a neural network.
+    /// A node of a nueral network.
     /// </summary>
     public class Node
     {
@@ -42,6 +42,10 @@ namespace AI.Classes
             Name = name;
             Algorithm = algorithmType;
         }
+        /// <summary>
+        /// Setup this node using the given saved node.
+        /// </summary>
+        /// <param name="savedNode">The saved node to use.</param>
         public Node(SavedNode savedNode)
         {
             if (savedNode == null) return;
@@ -54,7 +58,7 @@ namespace AI.Classes
         /// Add the given node to this node's input nodes.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        /// <param name="nodeLink">The existing node link to use (optional).</param>
+        /// <param name="nodeLink">The existing node link with filled in values to use (optional).</param>
         public void AddInputLink(Node? node, NodeLink? nodeLink = null)
         {
             if (node == null) return;
@@ -67,7 +71,7 @@ namespace AI.Classes
         /// Add the given node to this node's output nodes.
         /// </summary>
         /// <param name="node">The node to add.</param>
-        /// <param name="nodeLink">The existing node link to use (optional).</param>
+        /// <param name="nodeLink">The existing node link with filled in values to use (optional).</param>
         public void AddOutputLink(Node? node, NodeLink? nodeLink = null)
         {
             if (node == null) return;

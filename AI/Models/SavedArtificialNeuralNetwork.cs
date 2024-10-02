@@ -2,17 +2,34 @@
 
 namespace AI.Models
 {
-    public class SavedArtificialNeuralNetwork
+    /// <summary>
+    /// The saved file of an Artificial Nueral Network.
+    /// </summary>
+    public class SavedArtificialNueralNetwork
     {
+        /// <summary>
+        /// The name of the ANN.
+        /// </summary>
         public string Name { get; set; } = "";
+        /// <summary>
+        /// The saved nodes that represent the input nodes.
+        /// </summary>
         public List<SavedNode> InputNodes { get; set; } = new List<SavedNode>();
+        /// <summary>
+        /// The saved nodes that represent the layers of hidden nodes and output nodes.
+        /// </summary>
         public List<List<SavedNode>> Network { get; set; } = new List<List<SavedNode>>();
 
-        public static SavedArtificialNeuralNetwork PopulateSavedANN(ArtificialNeuralNetwork ann)
+        /// <summary>
+        /// Create and populate a new saved ANN from an ANN.
+        /// </summary>
+        /// <param name="ann">The ANN to use.</param>
+        /// <returns>The created and populated saved ANN.</returns>
+        public static SavedArtificialNueralNetwork PopulateSavedANN(ArtificialNueralNetwork ann)
         {
-            if (ann == null) return new SavedArtificialNeuralNetwork();
+            if (ann == null) return new SavedArtificialNueralNetwork();
 
-            SavedArtificialNeuralNetwork savedANN = new SavedArtificialNeuralNetwork()
+            SavedArtificialNueralNetwork savedANN = new SavedArtificialNueralNetwork()
             {
                 Name = ann.Name,
             };

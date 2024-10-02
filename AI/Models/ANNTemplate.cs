@@ -3,7 +3,7 @@
 namespace AI.Models
 {
     /// <summary>
-    /// Template for a new Artificial Neural Network.
+    /// Template for a new Artificial Nueral Network.
     /// </summary>
     public class ANNTemplate
     {
