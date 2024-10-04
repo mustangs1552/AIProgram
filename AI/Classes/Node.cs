@@ -130,7 +130,7 @@ namespace AI.Classes
         }
 
         /// <summary>
-        /// Format: "{Input nodes} ({Input nodes' weights}) -> [{Name} = {Current Value} ({Algorithm})] -> {Output nodes} ({Output nodes' weights})"
+        /// Format: "{Input nodes' Name} ({Input nodes' weights}) -> [{Node Name} = {Current Value} ({Algorithm})] -> {Output nodes' Name} ({Output nodes' weights})"
         /// </summary>
         /// <returns>The formated string.</returns>
         public override string ToString()

@@ -109,8 +109,11 @@ namespace AI.Classes
         /// Setup the network using the given template.
         /// </summary>
         /// <param name="template">The template to use.</param>
-        public ArtificialNueralNetwork(ANNTemplate template)
+        public ArtificialNueralNetwork(string name, ANNTemplate template)
         {
+            if (string.IsNullOrWhiteSpace(name)) return;
+            
+            Name = name;
             BuildNewNetwork(template.NumOfInputNodes, template.NumOfHiddentLayerNodes, template.OutputNodes.Count);
 
             for (int layerNodesI = 0; layerNodesI < Network.Count - 1; layerNodesI++)
@@ -138,8 +141,11 @@ namespace AI.Classes
         /// <param name="numOfOutputNodes">The number of output nodes to build.</param>
         /// <param name="hiddenLayerAlgorithmType">The algorithm to use for all the hidden layer nodes.</param>
         /// <param name="outputNodesAlgorithmType">The algorithm to use for all the output nodes.</param>
-        public ArtificialNueralNetwork(int numOfInputNodes, List<int> numOfHiddenLayerNodes, int numOfOutputNodes, Algorithms hiddenLayerAlgorithmType = Algorithms.None, Algorithms outputNodesAlgorithmType = Algorithms.None)
+        public ArtificialNueralNetwork(string name, int numOfInputNodes, List<int> numOfHiddenLayerNodes, int numOfOutputNodes, Algorithms hiddenLayerAlgorithmType = Algorithms.None, Algorithms outputNodesAlgorithmType = Algorithms.None)
         {
+            if (string.IsNullOrWhiteSpace(name)) return;
+
+            Name = name;
             BuildNewNetwork(numOfInputNodes, numOfHiddenLayerNodes, numOfOutputNodes, hiddenLayerAlgorithmType, outputNodesAlgorithmType);
         }
         /// <summary>
@@ -417,17 +423,19 @@ namespace AI.Classes
         /// <returns>The formated stirng.</returns>
         public override string ToString()
         {
-            string returnStr = $"Input Nodes ({InputNodes.Count}):\n";
-            foreach (InputNode node in InputNodes) returnStr += $"{node}\n";
+            string returnStr = $"Name: {Name}\n";
+            returnStr += "Node Format: '{Input nodes' Name} ({Input nodes' weights}) -> [{Node Name} = {Current Value} ({Algorithm})] -> {Output nodes' Name} ({Output nodes' weights})'\n";
+            returnStr += $"Input Nodes ({InputNodes.Count}):\n";
+            foreach (InputNode node in InputNodes) returnStr += $"\t{node}\n";
 
             for (int layerI = 0; layerI < Network.Count - 1; layerI++)
             {
                 returnStr += $"Hidden Layer {layerI + 1} ({Network[layerI].Count}):\n";
-                foreach (Node node in Network[layerI]) returnStr += $"{node}\n";
+                foreach (Node node in Network[layerI]) returnStr += $"\t{node}\n";
             }
 
             returnStr += $"Output Layers ({Network[Network.Count - 1].Count}):\n";
-            foreach (Node node in Network[Network.Count - 1]) returnStr += $"{node}\n";
+            foreach (Node node in Network[Network.Count - 1]) returnStr += $"\t{node}\n";
 
             return returnStr;
         }
