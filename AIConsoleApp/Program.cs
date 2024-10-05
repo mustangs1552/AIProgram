@@ -1,8 +1,8 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AIConsoleApp.Classes;
 
-Runtime runtime = new Runtime();
-runtime.Run();
+GuidedRuntime runtime = new GuidedRuntime();
+runtime.RunGuided();
 
 return 0;
 

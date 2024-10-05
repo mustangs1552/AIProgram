@@ -7,87 +7,37 @@ using System.Reflection;
 
 namespace AIConsoleApp.Classes
 {
-    public class Runtime
+    public class GuidedRuntime: Runtime
     {
-        protected IFileService fileService = new FileService();
-        protected bool exit = false;
-        protected ArtificialNueralNetwork? ann = null;
-        protected TrainingData trainingData = new TrainingData();
+        protected string? cmdInput = "";
+        protected Commands currCMD = Commands.None;
 
-        public bool Run(string[] args)
+        public bool RunGuided()
         {
-            if (args == null || args.Length == 0) return false;
+            while (!exit)
+            {
+                cmdInput = GetCMD();
+                currCMD = ProcessCMD(cmdInput);
+                Console.WriteLine();
 
-            Command cmd = ProcessArguments(args);
-            if (cmd.CMD == Commands.None) return false;
-
-            PerformCMD(cmd);
+                PerformGuidedCMD(currCMD);
+                Console.WriteLine();
+            }
 
             return true;
         }
 
-        public Command ProcessArguments(string[] args)
+        protected string? GetCMD()
         {
-            if (args == null || args.Length == 0) return new Command();
-
-            Command command = new Command();
-            command.CMD = ProcessCMD(args[0]);
-
-            for (int argI = 1; argI < args.Length; argI++) command.Args.Add(ProcessArgument(args[argI]));
-
-            return command;
+            Console.Write("Enter command: ");
+            return Console.ReadLine();
         }
 
-        protected Commands ProcessCMD(string? cmdStr)
+        protected void PerformGuidedCMD(Commands cmd)
         {
-            if (string.IsNullOrWhiteSpace(cmdStr)) return Commands.None;
+            if (cmd == Commands.None) return;
 
-            Commands cmd = Commands.None;
-            if (cmdStr.ToLower() == Commands.Help.ToString().ToLower()) cmd = Commands.Help;
-            else if (cmdStr.ToLower() == Commands.Exit.ToString().ToLower()) cmd = Commands.Exit;
-            else if (cmdStr.ToLower() == Commands.NewANN.ToString().ToLower()) cmd = Commands.NewANN;
-            else if (cmdStr.ToLower() == Commands.LoadANN.ToString().ToLower()) cmd = Commands.LoadANN;
-            else if (cmdStr.ToLower() == Commands.SaveANN.ToString().ToLower()) cmd = Commands.SaveANN;
-            else if (cmdStr.ToLower() == Commands.DisplayANN.ToString().ToLower()) cmd = Commands.DisplayANN;
-            else if (cmdStr.ToLower() == Commands.LoadData.ToString().ToLower()) cmd = Commands.LoadData;
-            else if (cmdStr.ToLower() == Commands.RunData.ToString().ToLower()) cmd = Commands.RunData;
-            else if (cmdStr.ToLower() == Commands.DisplayData.ToString().ToLower()) cmd = Commands.DisplayData;
-            else if (cmdStr.ToLower() == Commands.Calculate.ToString().ToLower()) cmd = Commands.Calculate;
-
-            return cmd;
-        }
-
-        protected Argument ProcessArgument(string arg)
-        {
-            if (string.IsNullOrWhiteSpace(arg)) return new Argument();
-
-            Argument argument = new Argument();
-            string annNameStr = CMDArguments.ANNName.ToString().ToLower();
-            string inputsStr = CMDArguments.Inputs.ToString().ToLower();
-            string dataPathStr = CMDArguments.DataPath.ToString().ToLower();
-            if (arg.Length > annNameStr.Length + 1 && arg.Substring(0, annNameStr.Length + 1).ToLower() == annNameStr) argument.Arg = CMDArguments.ANNName;
-            else if (arg.Length > inputsStr.Length + 1 && arg.Substring(0, inputsStr.Length + 1).ToLower() == inputsStr) argument.Arg = CMDArguments.Inputs;
-            else if (arg.Length > dataPathStr.Length + 1 && arg.Substring(0, dataPathStr.Length + 1).ToLower() == dataPathStr) argument.Arg = CMDArguments.DataPath;
-            if (argument.Arg == CMDArguments.None) return argument;
-
-            switch (argument.Arg)
-            {
-                case CMDArguments.ANNName:
-                case CMDArguments.Inputs:
-                case CMDArguments.DataPath:
-                    int equalsI = arg.IndexOf('=');
-                    if (equalsI > 0) argument.Value = arg.Substring(equalsI);
-                    break;
-            }
-
-            return argument;
-        }
-
-        protected void PerformCMD(Command cmd)
-        {
-            if (cmd == null) return;
-
-            switch (cmd.CMD)
+            switch (cmd)
             {
                 case Commands.Help:
                     PerformHelpCMD();
@@ -96,53 +46,33 @@ namespace AIConsoleApp.Classes
                     PerformExitCMD();
                     break;
                 case Commands.NewANN:
-                    PerformNewANNCMD(cmd);
+                    PerformGuidedNewANNCMD();
                     break;
                 case Commands.LoadANN:
-                    PerformLoadANNCMD(cmd);
+                    PerformGuidedLoadANNCMD();
                     break;
                 case Commands.SaveANN:
-                    PerformSaveANNCMD(cmd);
+                    PerformGuidedSaveANNCMD();
                     break;
                 case Commands.DisplayANN:
-                    PerformDisplayANNCMD(cmd);
+                    PerformGuidedDisplayANNCMD();
                     break;
                 case Commands.LoadData:
-                    PerformLoadDataCMD(cmd);
+                    PerformGuidedLoadDataCMD();
                     break;
                 case Commands.RunData:
-                    PerformRunDataCMD(cmd);
+                    PerformGuidedRunDataCMD();
                     break;
                 case Commands.DisplayData:
-                    PerformDisplayDataCMD(cmd);
+                    PerformGuidedDisplayDataCMD();
                     break;
                 case Commands.Calculate:
-                    PerformCalculateCMD(cmd);
+                    PerformGuidedCalculateCMD();
                     break;
             }
         }
 
-        protected void PerformHelpCMD()
-        {
-            Console.WriteLine($"AI App v{GetProjVersion()}");
-            Console.WriteLine("Use this app to manage Artificial Nueral Networks, run training data using them, and give them data to apply results for them after being trained.");
-            Console.WriteLine();
-
-            Console.WriteLine("Commands:");
-            Console.WriteLine("- Help: Displays these usage intructions and commands.");
-            Console.WriteLine("- Exit: Exit app.");
-            Console.WriteLine("- NewANN: Setup a new Artificial Nueral Network as the current selected one.");
-            Console.WriteLine("- LoadANN: Load an existing Artificial Nueral Network from file.");
-            Console.WriteLine("- SaveANN: Save the current Artificial Nueral Network to file.");
-            Console.WriteLine("- DisplayANN: Display the current Artificial Nueral Network.");
-        }
-
-        protected void PerformExitCMD()
-        {
-            exit = true;
-        }
-
-        protected void PerformNewANNCMD(Command cmd)
+        protected void PerformGuidedNewANNCMD()
         {
             Console.WriteLine("Create new Artificial Nueral Network");
             Console.WriteLine("Enter 'Cancel' to return.");
@@ -248,7 +178,7 @@ namespace AIConsoleApp.Classes
             Console.WriteLine(ann.ToString());
         }
 
-        protected void PerformLoadANNCMD(Command cmd)
+        protected void PerformGuidedLoadANNCMD()
         {
             Console.WriteLine("Load Existing Artificial Nueral Network");
             Console.WriteLine("Enter 'Cancel' to return.");
@@ -273,7 +203,7 @@ namespace AIConsoleApp.Classes
             }
         }
 
-        protected void PerformSaveANNCMD(Command cmd)
+        protected void PerformGuidedSaveANNCMD()
         {
             Console.WriteLine("Save Artificial Nueral Network");
             if (ann == null) Console.WriteLine("No current Artificial Nueral Network. Use 'NewANN' or 'LoadANN' to create or load an existing one.");
@@ -284,7 +214,7 @@ namespace AIConsoleApp.Classes
             }
         }
 
-        protected void PerformDisplayANNCMD(Command cmd)
+        protected void PerformGuidedDisplayANNCMD()
         {
             if (ann == null) Console.WriteLine("No current Artificial Nueral Network. Use 'NewANN' or 'LoadANN' to create or load an existing one.");
             else
@@ -294,7 +224,7 @@ namespace AIConsoleApp.Classes
             }
         }
 
-        protected void PerformLoadDataCMD(Command cmd)
+        protected void PerformGuidedLoadDataCMD()
         {
             Console.WriteLine("Load Training Data");
             if (ann == null)
@@ -328,7 +258,7 @@ namespace AIConsoleApp.Classes
             }
         }
 
-        protected void PerformRunDataCMD(Command cmd)
+        protected void PerformGuidedRunDataCMD()
         {
             Console.WriteLine("Run Training Data");
             if (ann == null)
@@ -417,7 +347,7 @@ namespace AIConsoleApp.Classes
             Console.WriteLine($"\nTraining finished in {DateTime.Now - startTime}.");
         }
 
-        protected void PerformDisplayDataCMD(Command cmd)
+        protected void PerformGuidedDisplayDataCMD()
         {
             if (ann == null) Console.WriteLine("No current Artificial Nueral Network. Use 'NewANN' or 'LoadANN' to create or load an existing one.");
             else if (trainingData == null) Console.WriteLine("No current loading data. Use 'LoadData' load an existing some.");
@@ -428,7 +358,7 @@ namespace AIConsoleApp.Classes
             }
         }
 
-        protected void PerformCalculateCMD(Command cmd)
+        protected void PerformGuidedCalculateCMD()
         {
             Console.WriteLine("Calculate Inputs");
             if (ann == null)
@@ -471,18 +401,6 @@ namespace AIConsoleApp.Classes
                 outputs.ForEach(output => outputStr += $"{output} ");
                 Console.WriteLine(outputStr);
             }
-        }
-
-        protected string GetProjVersion()
-        {
-            string? ver = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            if (string.IsNullOrEmpty(ver)) return "";
-
-            int lastPlusI = ver.LastIndexOf('+');
-            int lastPeriodI = ver.LastIndexOf('.');
-            if (lastPeriodI >= 0 && lastPeriodI > lastPlusI) return ver.Substring(0, lastPeriodI);
-            else if (lastPlusI >= 0) return ver.Substring(0, lastPlusI);
-            else return ver;
         }
     }
 }

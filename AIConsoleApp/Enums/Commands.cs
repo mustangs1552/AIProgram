@@ -1,6 +1,6 @@
 ﻿namespace AIConsoleApp.Enums
 {
-    public enum CMDs
+    public enum Commands
     {
         None,
 
@@ -14,6 +14,8 @@
 
         LoadData,
         RunData,
-        DisplayData
+        DisplayData,
+
+        Calculate
     }
 }

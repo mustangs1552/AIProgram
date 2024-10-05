@@ -16,7 +16,6 @@
             int valueI = 0;
             string[] values = new string[] { };
             float currValue = -1;
-            bool success = false;
             List<float> currValues = new List<float>();
             foreach (string row in csvData)
             {
@@ -26,8 +25,7 @@
                 for (valueI = 0; valueI < inputCount; valueI++)
                 {
                     if (valueI >= values.Length) break;
-                    success = float.TryParse(values[valueI], out currValue);
-                    if (success) currValues.Add(currValue);
+                    if (float.TryParse(values[valueI], out currValue)) currValues.Add(currValue);
                 }
                 if (currValues.Any()) Inputs.Add(currValues);
 
@@ -35,8 +33,7 @@
                 for (valueI = inputCount; valueI < inputCount + outputCount; valueI++)
                 {
                     if (valueI >= values.Length) break;
-                    success = float.TryParse(values[valueI], out currValue);
-                    if (success) currValues.Add(currValue);
+                    if (float.TryParse(values[valueI], out currValue)) currValues.Add(currValue);
                 }
                 if (currValues.Any()) CorrectOutputs.Add(currValues);
             }
