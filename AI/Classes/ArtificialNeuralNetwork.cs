@@ -159,13 +159,18 @@ namespace AI.Classes
             Name = savedANN.Name;
 
             savedANN.InputNodes.ForEach(savedNode => InputNodes.Add(new InputNode(savedNode)));
+            numOfInputNodes = InputNodes.Count;
+
             List<Node> currLayer = new List<Node>();
             foreach (List<SavedNode> savedLayer in savedANN.Network)
             {
                 currLayer = new List<Node>();
                 savedLayer.ForEach(savedNode => currLayer.Add(new Node(savedNode)));
                 Network.Add(currLayer);
+                numOfHiddenLayerNodes.Add(currLayer.Count);
             }
+            numOfOutputNodes = NumOfHiddenLayerNodes.Last();
+            numOfHiddenLayerNodes.RemoveAt(NumOfHiddenLayerNodes.Count - 1);
 
             Node? currStartNode = null;
             Node? currEndNode = null;

@@ -10,6 +10,10 @@
         NewANN,
         LoadANN,
         SaveANN,
-        DisplayANN
+        DisplayANN,
+
+        LoadData,
+        RunData,
+        DisplayData
     }
 }
