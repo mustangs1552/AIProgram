@@ -124,7 +124,7 @@ namespace AIConsoleApp.Classes
 
         protected void PerformHelpCMD()
         {
-            Console.WriteLine($"AI App v{GetProjVersion()}");
+            Console.WriteLine("AI App v{GetProjVersion()}");
             Console.WriteLine("Use this app to manage Artificial Nueral Networks, run training data using them, and give them data to apply results for them after being trained.");
             Console.WriteLine();
 
