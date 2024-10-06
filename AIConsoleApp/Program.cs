@@ -2,7 +2,9 @@
 using AIConsoleApp.Classes;
 
 GuidedRuntime runtime = new GuidedRuntime();
-runtime.RunGuided();
+runtime.Run(new string[] { "Calculate",  "ANNName=ANN", "Inputs=1,0,1" });
+//if (args != null && args.Length > 0) runtime.Run(args);
+//else runtime.RunGuided();
 
 return 0;
 
