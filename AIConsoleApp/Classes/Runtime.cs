@@ -135,6 +135,10 @@ namespace AIConsoleApp.Classes
             Console.WriteLine("- LoadANN: Load an existing Artificial Nueral Network from file.");
             Console.WriteLine("- SaveANN: Save the current Artificial Nueral Network to file.");
             Console.WriteLine("- DisplayANN: Display the current Artificial Nueral Network.");
+            Console.WriteLine("- LoadData: Load a CSV of data values to train the current Artificial Nueral Network. CSV must have the inputs then correct outputs and must match the number inputs/outputs as the current Artificial Nueral Network.");
+            Console.WriteLine("- RunData: Run the current Artificial Nueral Network using the currently loaded data.");
+            Console.WriteLine("- DisplayData: Display the currently loaded data.");
+            Console.WriteLine("- Calculate: Run the current Artificial Nueral Network using one set of inputs once.");
         }
 
         protected void PerformExitCMD()
